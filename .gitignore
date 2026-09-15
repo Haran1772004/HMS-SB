@@ -32,4 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 application.properties
-Hospital_management_API.postman_collection
+Hospital_management_API.postman_collection.json
