@@ -2,6 +2,7 @@ package com.hospital.hospital_spring.controller;
 
 import com.hospital.hospital_spring.entity.Doctor;
 import com.hospital.hospital_spring.service.DoctorService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,21 +13,20 @@ public class DoctorController {
 
     private final DoctorService doctorService;
 
-
     public DoctorController(DoctorService doctorService) {
         this.doctorService = doctorService;
     }
 
-
-    // Add doctor
+    
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public void addDoctor(@RequestBody Doctor doctor) {
 
         doctorService.addDoctor(doctor);
     }
 
-
-    // Update doctor
+    
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{doctorId}")
     public void updateDoctor(
             @PathVariable int doctorId,
@@ -37,8 +37,8 @@ public class DoctorController {
         doctorService.updateDoctor(doctor);
     }
 
-
-    // Deactivate doctor
+    
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{doctorId}/deactivate")
     public void deactivateDoctor(
             @PathVariable int doctorId) {
@@ -46,8 +46,8 @@ public class DoctorController {
         doctorService.deactivateDoctor(doctorId);
     }
 
-
-    // Activate doctor
+    
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{doctorId}/activate")
     public void activateDoctor(
             @PathVariable int doctorId) {
@@ -56,7 +56,7 @@ public class DoctorController {
     }
 
 
-    // Get doctor by ID
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST', 'DOCTOR', 'PATIENT')")
     @GetMapping("/{doctorId}")
     public Doctor getDoctorById(
             @PathVariable int doctorId) {
@@ -65,7 +65,7 @@ public class DoctorController {
     }
 
 
-    // Get all doctors
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST', 'DOCTOR', 'PATIENT')")
     @GetMapping
     public List<Doctor> getAllDoctors() {
 

@@ -1,11 +1,14 @@
 package com.hospital.hospital_spring.service;
 
+import com.hospital.hospital_spring.entity.MedicalRecord;
 import com.hospital.hospital_spring.entity.Prescription;
 import com.hospital.hospital_spring.repository.MedicalRecordRepository;
 import com.hospital.hospital_spring.repository.PrescriptionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PrescriptionService {
@@ -21,6 +24,7 @@ public class PrescriptionService {
         this.medicalRecordRepository = medicalRecordRepository;
     }
 
+    @Transactional
     public void addPrescription(Prescription prescription) {
 
         if (prescription == null
@@ -50,6 +54,23 @@ public class PrescriptionService {
 
         return prescriptionRepository
                 .findByRecordIdOrderByPrescriptionId(recordId);
+    }
+
+    public List<Prescription> takePrescriptionsByPatient(int patientId) {
+
+        List<MedicalRecord> records = medicalRecordRepository
+                .findByAppointmentPatientPatientIdOrderByRecordDateDescRecordIdDesc(patientId);
+
+        if (records.isEmpty()) {
+            return List.of();
+        }
+
+        List<Integer> recordIds = records.stream()
+                .map(MedicalRecord::takeRecordId)
+                .collect(Collectors.toList());
+
+        return prescriptionRepository
+                .findByRecordIdInOrderByPrescriptionId(recordIds);
     }
 
     private boolean isNonBlank(String value) {

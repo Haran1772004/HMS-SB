@@ -67,7 +67,7 @@ public class Appointment {
         this.appointmentTime = appointmentTime;
         this.status = status;
     }
-//just for understanding the string input for appointment date and time ...
+
     public Appointment(
             int appointmentId,
             Patient patient,

@@ -9,4 +9,6 @@ public interface PrescriptionRepository
         extends JpaRepository<Prescription, Integer> {
 
     List<Prescription> findByRecordIdOrderByPrescriptionId(int recordId);
+
+    List<Prescription> findByRecordIdInOrderByPrescriptionId(List<Integer> recordIds);
 }

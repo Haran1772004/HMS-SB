@@ -5,17 +5,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.hospital.hospital_spring.model.AccountStatus;
 import jakarta.persistence.*;
 
-
-
 @Entity
 @Table(name = "users")
 @JsonPropertyOrder({
-    "userId",
-    "username",
-    "password",
-    "role",
-    "status",
-    "statusName"
+        "userId",
+        "username",
+        "role",
+        "status",
+        "statusName"
 })
 public class User {
 
@@ -24,24 +21,21 @@ public class User {
     @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     private String role;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private AccountStatus status;
 
-
-    
     public User() {
     }
-
 
     public User(String username, String password, String role) {
         this.username = username;
@@ -49,7 +43,6 @@ public class User {
         this.role = role;
         this.status = AccountStatus.ACTIVE;
     }
-
 
     public User(String username, String password, String role,
                 int userId, AccountStatus status) {
@@ -60,7 +53,6 @@ public class User {
         this.status = status;
     }
 
-
     @JsonProperty("userId")
     public int takeUserId() {
         return userId;
@@ -69,7 +61,6 @@ public class User {
     public void setUserId(int userId) {
         this.userId = userId;
     }
-
 
     @JsonProperty("username")
     public String takeUsername() {
@@ -80,8 +71,11 @@ public class User {
         this.username = username;
     }
 
-
-    @JsonProperty("password")
+    /**
+     * Password is WRITE_ONLY: it can be received on incoming JSON payloads
+     * (e.g. POST /users), but will NEVER be serialized into outgoing JSON responses.
+     */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String takePassword() {
         return password;
     }
@@ -89,7 +83,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
 
     @JsonProperty("role")
     public String takeRole() {
@@ -100,7 +93,6 @@ public class User {
         this.role = role;
     }
 
-
     @JsonProperty("status")
     public AccountStatus takeStatus() {
         return status;
@@ -109,7 +101,6 @@ public class User {
     public void setStatus(AccountStatus status) {
         this.status = status;
     }
-
 
     @JsonProperty("statusName")
     public String takeStatusName() {

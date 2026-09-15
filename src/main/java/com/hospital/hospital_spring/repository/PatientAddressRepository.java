@@ -31,4 +31,6 @@ public interface PatientAddressRepository
             AddressType addressType,
             int addressId
     );
+
+    void deleteByPatientId(int patientId);
 }

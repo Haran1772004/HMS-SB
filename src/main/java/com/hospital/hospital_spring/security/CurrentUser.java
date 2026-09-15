@@ -17,8 +17,7 @@ public class CurrentUser {
 
     public static String getUsername() {
 
-        Authentication authentication =
-                getAuthentication();
+        Authentication authentication = getAuthentication();
 
         if (authentication == null) {
             return null;
@@ -29,15 +28,13 @@ public class CurrentUser {
 
     public static int getUserId() {
 
-        Authentication authentication =
-                getAuthentication();
+        Authentication authentication = getAuthentication();
 
         if (authentication == null) {
             return 0;
         }
 
-        Object details =
-                authentication.getDetails();
+        Object details = authentication.getDetails();
 
         if (details instanceof Integer) {
             return (Integer) details;
@@ -48,8 +45,7 @@ public class CurrentUser {
 
     public static String getRole() {
 
-        Authentication authentication =
-                getAuthentication();
+        Authentication authentication = getAuthentication();
 
         if (authentication == null) {
             return null;

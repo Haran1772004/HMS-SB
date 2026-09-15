@@ -16,46 +16,23 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthService(
-            UserRepository userRepository,
-            JwtService jwtService,
-            AuthenticationManager authenticationManager) {
+    public AuthService(UserRepository userRepository, JwtService jwtService, AuthenticationManager authenticationManager) {
 
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
     }
 
-    public String login(
-            String username,
-            String password) {
-
+    public String login(String username, String password) {
         try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
 
-            // Spring Security performs:
-            //
-            // 1. Find user
-            // 2. Load password
-            // 3. Compare BCrypt password
-            // 4. Verify authentication
-            //
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            username,
-                            password
-                    )
-            );
+        } 
+        
+        catch (org.springframework.security.core.AuthenticationException exception) {
 
-        } catch (org.springframework.security.core.AuthenticationException exception) {
-
-            throw new AuthenticationException(
-                    "Invalid username or password."
-            );
+            throw new AuthenticationException("Invalid username or password.");
         }
-
-
-        // Authentication succeeded.
-        // Now get our actual User entity.
 
         User user = userRepository
                 .findByUsername(username)
@@ -64,9 +41,6 @@ public class AuthService {
                                 "Invalid username or password."
                         )
                 );
-
-
-        // Keep your old account-status behavior.
 
         if (user.takeStatus() == null) {
 
@@ -95,11 +69,6 @@ public class AuthService {
                     "Your account registration was rejected."
             );
         }
-
-
-        // Authentication + status checks succeeded.
-        // Generate JWT.
-
         return jwtService.generateToken(user);
     }
 }

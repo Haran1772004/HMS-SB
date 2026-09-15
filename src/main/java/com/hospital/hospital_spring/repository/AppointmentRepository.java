@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface AppointmentRepository
         extends JpaRepository<Appointment, Integer> {
+
     boolean existsByDoctorDoctorIdAndAppointmentDateAndAppointmentTimeAndStatus(
             int doctorId,
             LocalDate appointmentDate,
@@ -32,12 +33,20 @@ public interface AppointmentRepository
             int doctorId
     );
 
-
     List<Appointment> findByAppointmentDateOrderByAppointmentTimeAsc(
             LocalDate appointmentDate
     );
-    
+
     List<Appointment> findByStatusOrderByAppointmentDateAscAppointmentTimeAsc(
             AppointmentStatus status
+    );
+
+    /**
+     * Today's appointments for a specific doctor.
+     * Used by the doctor to see their own schedule for today.
+     */
+    List<Appointment> findByDoctorDoctorIdAndAppointmentDateOrderByAppointmentTimeAsc(
+            int doctorId,
+            LocalDate appointmentDate
     );
 }

@@ -1,10 +1,12 @@
 package com.hospital.hospital_spring.service;
 
 import com.hospital.hospital_spring.entity.Department;
+import com.hospital.hospital_spring.exception.ConflictException;
 import com.hospital.hospital_spring.exception.DepartmentNotFoundException;
-import com.hospital.hospital_spring.repository.DepartmentRepository;
 import com.hospital.hospital_spring.model.AccountStatus;
+import com.hospital.hospital_spring.repository.DepartmentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ public class DepartmentService {
         this.departmentRepository = departmentRepository;
     }
 
+    @Transactional
     public void addDepartment(Department department) {
 
         if (department == null) {
@@ -37,6 +40,7 @@ public class DepartmentService {
         departmentRepository.save(department);
     }
 
+    @Transactional
     public void updateDepartment(Department department) {
 
         if (department == null) {
@@ -72,6 +76,7 @@ public class DepartmentService {
         departmentRepository.save(existingDepartment);
     }
 
+    @Transactional
     public void deactivateDepartment(int departmentId) {
 
         Department department =
@@ -84,10 +89,10 @@ public class DepartmentService {
                         );
 
         department.setStatus(AccountStatus.INACTIVE);
-
         departmentRepository.save(department);
     }
 
+    @Transactional
     public void activateDepartment(int departmentId) {
 
         Department department =
@@ -100,7 +105,6 @@ public class DepartmentService {
                         );
 
         department.setStatus(AccountStatus.ACTIVE);
-
         departmentRepository.save(department);
     }
 
@@ -125,7 +129,7 @@ public class DepartmentService {
         if (departmentRepository.existsByName(
                 department.takeName())) {
 
-            throw new IllegalArgumentException(
+            throw new ConflictException(
                     "Department with name already exists: "
                             + department.takeName()
             );
@@ -138,7 +142,7 @@ public class DepartmentService {
                 department.takeName(),
                 department.takeDepartmentId())) {
 
-            throw new IllegalArgumentException(
+            throw new ConflictException(
                     "Department with name already exists: "
                             + department.takeName()
             );

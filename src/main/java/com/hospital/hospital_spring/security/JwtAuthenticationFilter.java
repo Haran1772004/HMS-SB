@@ -7,20 +7,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.stereotype.Component;
-
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
 
 @Component
-public class JwtAuthenticationFilter
-        extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
@@ -35,44 +33,34 @@ public class JwtAuthenticationFilter
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authorizationHeader =
-                request.getHeader("Authorization");
+        String authorizationHeader =  request.getHeader("Authorization");
 
-        if (authorizationHeader == null
-                || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token =
-                authorizationHeader.substring(7);
+        String token = authorizationHeader.substring(7);
 
         if (!jwtService.isTokenValid(token)) {
-
-            response.setStatus(
-                    HttpServletResponse.SC_UNAUTHORIZED
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(
+                    "{\"status\":401,\"error\":\"Unauthorized\",\"message\":\"Invalid or expired JWT\",\"path\":\""
+                    + request.getRequestURI() + "\"}"
             );
-
-            response.getWriter()
-                    .write("Invalid or expired JWT");
-
             return;
         }
 
-        String username =
-                jwtService.extractUsername(token);
+        String username =jwtService.extractUsername(token);
 
-        int userId =
-                jwtService.extractUserId(token);
+        int userId =jwtService.extractUserId(token);
 
-        String role =
-                jwtService.extractRole(token);
+        String role =jwtService.extractRole(token);
 
-        SimpleGrantedAuthority authority =
-                new SimpleGrantedAuthority(
-                        "ROLE_" + role
-                );
+        SimpleGrantedAuthority authority =new SimpleGrantedAuthority("ROLE_" + role);
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
@@ -81,9 +69,7 @@ public class JwtAuthenticationFilter
                         List.of(authority)
                 );
 
-        /*
-         * Store userId as authentication details.
-         */
+     
         authentication.setDetails(userId);
 
         SecurityContextHolder
