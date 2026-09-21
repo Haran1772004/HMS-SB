@@ -55,7 +55,7 @@ public class RegistrationService {
             throw new IllegalArgumentException("Registration request is required.");
         }
 
-        // 1. Validate all fields
+        
         validateUsernameField(request.getUsername());
         validatePasswordField(request.getPassword());
         validateNameField(request.getName(), "Patient name");
@@ -64,14 +64,14 @@ public class RegistrationService {
         validatePhoneField(request.getPhone());
         validateEmailField(request.getEmail());
 
-        // 2. Check username uniqueness
+        
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new ConflictException(
                     "Username is already taken: " + request.getUsername()
             );
         }
 
-        // 3. Check patient phone/email uniqueness
+        
         if (patientRepository.existsByPhone(request.getPhone())) {
             throw new ConflictException(
                     "A patient with this phone number already exists."
@@ -84,10 +84,10 @@ public class RegistrationService {
             );
         }
 
-        // 4. BCrypt-encode the password
+        
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-        // 5. Create and save the User
+        
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(encodedPassword);
@@ -96,7 +96,7 @@ public class RegistrationService {
 
         User savedUser = userRepository.save(user);
 
-        // 6. Create and save the Patient profile
+        
         Patient patient = new Patient();
         patient.setUserId(savedUser.takeUserId());
         patient.setName(request.getName());
@@ -108,7 +108,7 @@ public class RegistrationService {
 
         Patient savedPatient = patientRepository.save(patient);
 
-        // 7. Optionally save a PatientAddress
+        
         boolean hasAddress =
                 isNonBlank(request.getState())
                 || isNonBlank(request.getDistrict())
@@ -136,7 +136,7 @@ public class RegistrationService {
             throw new IllegalArgumentException("Registration request is required.");
         }
 
-        // 1. Validate all fields
+        
         validateUsernameField(request.getUsername());
         validatePasswordField(request.getPassword());
         validateNameField(request.getName(), "Doctor name");
@@ -145,14 +145,14 @@ public class RegistrationService {
         validateEmailField(request.getEmail());
         validateDepartmentId(request.getDepartmentId());
 
-        // 2. Check username uniqueness
+        
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new ConflictException(
                     "Username is already taken: " + request.getUsername()
             );
         }
 
-        // 3. Check doctor phone/email uniqueness
+        
         if (doctorRepository.existsByPhone(request.getPhone())) {
             throw new ConflictException(
                     "A doctor with this phone number already exists."
@@ -165,7 +165,7 @@ public class RegistrationService {
             );
         }
 
-        // 4. Verify the department exists
+        
         Department department = departmentRepository
                 .findById(request.getDepartmentId())
                 .orElseThrow(() ->
@@ -175,7 +175,7 @@ public class RegistrationService {
                         )
                 );
 
-        // 5. Verify the department is ACTIVE
+        
         if (department.takeStatus() != AccountStatus.ACTIVE) {
             throw new IllegalArgumentException(
                     "The selected department is not active. "
@@ -183,10 +183,10 @@ public class RegistrationService {
             );
         }
 
-        // 6. BCrypt-encode the password
+        
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-        // 7. Create and save the User
+        // 
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(encodedPassword);
@@ -195,7 +195,7 @@ public class RegistrationService {
 
         User savedUser = userRepository.save(user);
 
-        // 8. Create and save the Doctor profile
+        
         Doctor doctor = new Doctor();
         doctor.setUserId(savedUser.takeUserId());
         doctor.setName(request.getName());
@@ -208,9 +208,7 @@ public class RegistrationService {
         doctorRepository.save(doctor);
     }
 
-    // =========================================================================
-    // Private validation helpers
-    // =========================================================================
+    
 
     private void validateUsernameField(String username) {
         if (username == null || username.isBlank()) {
@@ -230,6 +228,10 @@ public class RegistrationService {
         if (password.length() < 6) {
             throw new IllegalArgumentException("Password must be at least 6 characters.");
         }
+       boolean hasUppercase = password.matches(".*[A-Z].*");
+       if(!hasUppercase){
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter.");
+       }
     }
 
     private void validateNameField(String name, String fieldLabel) {

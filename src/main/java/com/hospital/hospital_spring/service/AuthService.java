@@ -37,10 +37,7 @@ public class AuthService {
         User user = userRepository
                 .findByUsername(username)
                 .orElseThrow(() ->
-                        new AuthenticationException(
-                                "Invalid username or password."
-                        )
-                );
+                        new AuthenticationException("Invalid username or password."));
 
         if (user.takeStatus() == null) {
 

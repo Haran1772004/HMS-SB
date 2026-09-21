@@ -50,8 +50,7 @@ public class AppointmentController {
     @GetMapping("/{appointmentId}")
     public Appointment getAppointmentById(@PathVariable int appointmentId) {
 
-        Appointment appointment =
-                appointmentService.takeAppointmentById(appointmentId);
+        Appointment appointment = appointmentService.takeAppointmentById(appointmentId);
 
         if (isDoctorRole()) {
             int appointmentDoctorId =
