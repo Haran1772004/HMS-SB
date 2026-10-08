@@ -41,9 +41,7 @@ public class AuthService {
 
         if (user.takeStatus() == null) {
 
-            throw new AuthenticationException(
-                    "Invalid account status."
-            );
+            throw new AuthenticationException("Invalid account status.");
         }
 
 

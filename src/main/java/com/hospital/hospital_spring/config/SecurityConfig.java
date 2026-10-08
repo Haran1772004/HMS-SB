@@ -75,7 +75,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .csrf(csrf -> csrf.disable()) // we using JWt So we dont need it . because we use it to prevent cross site request forgery attacks
+            .csrf(csrf -> csrf.disable()) // we using JWt So we dont need it . because we use it to prevent cross site request forgery attacks it is meant by when a authenticated user is tricked into performing actions on a web application without their consent. but we are using JWT so we dont need it
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

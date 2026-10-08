@@ -50,12 +50,10 @@ public class UserService {
         user.setRole(normalizedRole);
 
         if (userRepository.existsByUsername(user.takeUsername())) {
-            throw new ConflictException(
-                    "Username is already taken: " + user.takeUsername()
-            );
+            throw new ConflictException("Username is already taken: " + user.takeUsername());
         }
 
-        // BCrypt encode if not already hashed
+        
         if (!user.takePassword().startsWith("$2a$") &&
                 !user.takePassword().startsWith("$2b$") &&
                 !user.takePassword().startsWith("$2y$")) {
